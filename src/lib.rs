@@ -30862,9 +30862,11 @@ pub mod km {
         kc_reecpu_lock_cmd: KcReecpuLockCmd,
         kc_pcpu_lock_cmd: KcPcpuLockCmd,
         kc_aidsp_lock_cmd: KcAidspLockCmd,
-        _reserved34: [u8; 0x04],
+        kc_teecpu_flush_busy: KcTeecpuFlushBusy,
         kc_reecpu_flush_busy: KcReecpuFlushBusy,
-        _reserved35: [u8; 0x18],
+        kc_pcpu_flush_busy: KcPcpuFlushBusy,
+        kc_aidsp_flush_busy: KcAidspFlushBusy,
+        _reserved38: [u8; 0x10],
         kc_rd_slot_num: KcRdSlotNum,
         kc_rd_lock_status: KcRdLockStatus,
     }
@@ -31057,10 +31059,25 @@ pub mod km {
         pub const fn kc_aidsp_lock_cmd(&self) -> &KcAidspLockCmd {
             &self.kc_aidsp_lock_cmd
         }
-        #[doc = "0x1b14 - REE keyslot flush status"]
+        #[doc = "0x1b10 - TEE CPU keyslot flush status"]
+        #[inline(always)]
+        pub const fn kc_teecpu_flush_busy(&self) -> &KcTeecpuFlushBusy {
+            &self.kc_teecpu_flush_busy
+        }
+        #[doc = "0x1b14 - REE CPU keyslot flush status"]
         #[inline(always)]
         pub const fn kc_reecpu_flush_busy(&self) -> &KcReecpuFlushBusy {
             &self.kc_reecpu_flush_busy
+        }
+        #[doc = "0x1b18 - PCPU keyslot flush status"]
+        #[inline(always)]
+        pub const fn kc_pcpu_flush_busy(&self) -> &KcPcpuFlushBusy {
+            &self.kc_pcpu_flush_busy
+        }
+        #[doc = "0x1b1c - AIDSP keyslot flush status"]
+        #[inline(always)]
+        pub const fn kc_aidsp_flush_busy(&self) -> &KcAidspFlushBusy {
+            &self.kc_aidsp_flush_busy
         }
         #[doc = "0x1b30 - Keyslot query slot number selection"]
         #[inline(always)]
@@ -32564,46 +32581,6 @@ pub mod km {
         #[doc = "`reset()` method sets KC_REECPU_LOCK_CMD to value 0"]
         impl crate::Resettable for KcReecpuLockCmdSpec {}
     }
-    #[doc = "KC_REECPU_FLUSH_BUSY (r) register accessor: REE keyslot flush status\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_reecpu_flush_busy::R`]. See [API](https://docs.rs/svd2rust/#read--modify--write-api).\n\nFor information about available fields see [`mod@kc_reecpu_flush_busy`] module"]
-    #[doc(alias = "KC_REECPU_FLUSH_BUSY")]
-    pub type KcReecpuFlushBusy = crate::Reg<kc_reecpu_flush_busy::KcReecpuFlushBusySpec>;
-    #[doc = "REE keyslot flush status"]
-    pub mod kc_reecpu_flush_busy {
-        #[doc = "Register `KC_REECPU_FLUSH_BUSY` reader"]
-        pub type R = crate::R<KcReecpuFlushBusySpec>;
-        #[doc = "Field `flush_busy` reader - Keyslot flush is in progress"]
-        pub type FlushBusyR = crate::BitReader;
-        #[doc = "Field `unlock_fail` reader - Last keyslot unlock failed"]
-        pub type UnlockFailR = crate::BitReader;
-        #[doc = "Field `timeout_error` reader - Last keyslot flush timed out"]
-        pub type TimeoutErrorR = crate::BitReader;
-        impl R {
-            #[doc = "Bit 0 - Keyslot flush is in progress"]
-            #[inline(always)]
-            pub fn flush_busy(&self) -> FlushBusyR {
-                FlushBusyR::new((self.bits & 1) != 0)
-            }
-            #[doc = "Bit 1 - Last keyslot unlock failed"]
-            #[inline(always)]
-            pub fn unlock_fail(&self) -> UnlockFailR {
-                UnlockFailR::new(((self.bits >> 1) & 1) != 0)
-            }
-            #[doc = "Bit 2 - Last keyslot flush timed out"]
-            #[inline(always)]
-            pub fn timeout_error(&self) -> TimeoutErrorR {
-                TimeoutErrorR::new(((self.bits >> 2) & 1) != 0)
-            }
-        }
-        #[doc = "REE keyslot flush status\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_reecpu_flush_busy::R`](R). See [API](https://docs.rs/svd2rust/#read--modify--write-api)."]
-        pub struct KcReecpuFlushBusySpec;
-        impl crate::RegisterSpec for KcReecpuFlushBusySpec {
-            type Ux = u32;
-        }
-        #[doc = "`read()` method returns [`kc_reecpu_flush_busy::R`](R) reader structure"]
-        impl crate::Readable for KcReecpuFlushBusySpec {}
-        #[doc = "`reset()` method sets KC_REECPU_FLUSH_BUSY to value 0"]
-        impl crate::Resettable for KcReecpuFlushBusySpec {}
-    }
     #[doc = "KC_PCPU_LOCK_CMD (rw) register accessor: PCPU keyslot lock command\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_pcpu_lock_cmd::R`]. You can [`reset`](crate::Reg::reset), [`write`](crate::Reg::write), [`write_with_zero`](crate::Reg::write_with_zero) this register using [`kc_pcpu_lock_cmd::W`]. You can also [`modify`](crate::Reg::modify) this register. See [API](https://docs.rs/svd2rust/#read--modify--write-api).\n\nFor information about available fields see [`mod@kc_pcpu_lock_cmd`] module"]
     #[doc(alias = "KC_PCPU_LOCK_CMD")]
     pub type KcPcpuLockCmd = crate::Reg<kc_pcpu_lock_cmd::KcPcpuLockCmdSpec>;
@@ -32755,6 +32732,166 @@ pub mod km {
         }
         #[doc = "`reset()` method sets KC_AIDSP_LOCK_CMD to value 0"]
         impl crate::Resettable for KcAidspLockCmdSpec {}
+    }
+    #[doc = "KC_TEECPU_FLUSH_BUSY (r) register accessor: TEE CPU keyslot flush status\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_teecpu_flush_busy::R`]. See [API](https://docs.rs/svd2rust/#read--modify--write-api).\n\nFor information about available fields see [`mod@kc_teecpu_flush_busy`] module"]
+    #[doc(alias = "KC_TEECPU_FLUSH_BUSY")]
+    pub type KcTeecpuFlushBusy = crate::Reg<kc_teecpu_flush_busy::KcTeecpuFlushBusySpec>;
+    #[doc = "TEE CPU keyslot flush status"]
+    pub mod kc_teecpu_flush_busy {
+        #[doc = "Register `KC_TEECPU_FLUSH_BUSY` reader"]
+        pub type R = crate::R<KcTeecpuFlushBusySpec>;
+        #[doc = "Field `flush_busy` reader - Keyslot flush is in progress"]
+        pub type FlushBusyR = crate::BitReader;
+        #[doc = "Field `unlock_fail` reader - Last keyslot unlock failed"]
+        pub type UnlockFailR = crate::BitReader;
+        #[doc = "Field `timeout_error` reader - Last keyslot flush timed out"]
+        pub type TimeoutErrorR = crate::BitReader;
+        impl R {
+            #[doc = "Bit 0 - Keyslot flush is in progress"]
+            #[inline(always)]
+            pub fn flush_busy(&self) -> FlushBusyR {
+                FlushBusyR::new((self.bits & 1) != 0)
+            }
+            #[doc = "Bit 1 - Last keyslot unlock failed"]
+            #[inline(always)]
+            pub fn unlock_fail(&self) -> UnlockFailR {
+                UnlockFailR::new(((self.bits >> 1) & 1) != 0)
+            }
+            #[doc = "Bit 2 - Last keyslot flush timed out"]
+            #[inline(always)]
+            pub fn timeout_error(&self) -> TimeoutErrorR {
+                TimeoutErrorR::new(((self.bits >> 2) & 1) != 0)
+            }
+        }
+        #[doc = "TEE CPU keyslot flush status\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_teecpu_flush_busy::R`](R). See [API](https://docs.rs/svd2rust/#read--modify--write-api)."]
+        pub struct KcTeecpuFlushBusySpec;
+        impl crate::RegisterSpec for KcTeecpuFlushBusySpec {
+            type Ux = u32;
+        }
+        #[doc = "`read()` method returns [`kc_teecpu_flush_busy::R`](R) reader structure"]
+        impl crate::Readable for KcTeecpuFlushBusySpec {}
+        #[doc = "`reset()` method sets KC_TEECPU_FLUSH_BUSY to value 0"]
+        impl crate::Resettable for KcTeecpuFlushBusySpec {}
+    }
+    #[doc = "KC_REECPU_FLUSH_BUSY (r) register accessor: REE CPU keyslot flush status\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_reecpu_flush_busy::R`]. See [API](https://docs.rs/svd2rust/#read--modify--write-api).\n\nFor information about available fields see [`mod@kc_reecpu_flush_busy`] module"]
+    #[doc(alias = "KC_REECPU_FLUSH_BUSY")]
+    pub type KcReecpuFlushBusy = crate::Reg<kc_reecpu_flush_busy::KcReecpuFlushBusySpec>;
+    #[doc = "REE CPU keyslot flush status"]
+    pub mod kc_reecpu_flush_busy {
+        #[doc = "Register `KC_REECPU_FLUSH_BUSY` reader"]
+        pub type R = crate::R<KcReecpuFlushBusySpec>;
+        #[doc = "Field `flush_busy` reader - Keyslot flush is in progress"]
+        pub type FlushBusyR = crate::BitReader;
+        #[doc = "Field `unlock_fail` reader - Last keyslot unlock failed"]
+        pub type UnlockFailR = crate::BitReader;
+        #[doc = "Field `timeout_error` reader - Last keyslot flush timed out"]
+        pub type TimeoutErrorR = crate::BitReader;
+        impl R {
+            #[doc = "Bit 0 - Keyslot flush is in progress"]
+            #[inline(always)]
+            pub fn flush_busy(&self) -> FlushBusyR {
+                FlushBusyR::new((self.bits & 1) != 0)
+            }
+            #[doc = "Bit 1 - Last keyslot unlock failed"]
+            #[inline(always)]
+            pub fn unlock_fail(&self) -> UnlockFailR {
+                UnlockFailR::new(((self.bits >> 1) & 1) != 0)
+            }
+            #[doc = "Bit 2 - Last keyslot flush timed out"]
+            #[inline(always)]
+            pub fn timeout_error(&self) -> TimeoutErrorR {
+                TimeoutErrorR::new(((self.bits >> 2) & 1) != 0)
+            }
+        }
+        #[doc = "REE CPU keyslot flush status\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_reecpu_flush_busy::R`](R). See [API](https://docs.rs/svd2rust/#read--modify--write-api)."]
+        pub struct KcReecpuFlushBusySpec;
+        impl crate::RegisterSpec for KcReecpuFlushBusySpec {
+            type Ux = u32;
+        }
+        #[doc = "`read()` method returns [`kc_reecpu_flush_busy::R`](R) reader structure"]
+        impl crate::Readable for KcReecpuFlushBusySpec {}
+        #[doc = "`reset()` method sets KC_REECPU_FLUSH_BUSY to value 0"]
+        impl crate::Resettable for KcReecpuFlushBusySpec {}
+    }
+    #[doc = "KC_PCPU_FLUSH_BUSY (r) register accessor: PCPU keyslot flush status\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_pcpu_flush_busy::R`]. See [API](https://docs.rs/svd2rust/#read--modify--write-api).\n\nFor information about available fields see [`mod@kc_pcpu_flush_busy`] module"]
+    #[doc(alias = "KC_PCPU_FLUSH_BUSY")]
+    pub type KcPcpuFlushBusy = crate::Reg<kc_pcpu_flush_busy::KcPcpuFlushBusySpec>;
+    #[doc = "PCPU keyslot flush status"]
+    pub mod kc_pcpu_flush_busy {
+        #[doc = "Register `KC_PCPU_FLUSH_BUSY` reader"]
+        pub type R = crate::R<KcPcpuFlushBusySpec>;
+        #[doc = "Field `flush_busy` reader - Keyslot flush is in progress"]
+        pub type FlushBusyR = crate::BitReader;
+        #[doc = "Field `unlock_fail` reader - Last keyslot unlock failed"]
+        pub type UnlockFailR = crate::BitReader;
+        #[doc = "Field `timeout_error` reader - Last keyslot flush timed out"]
+        pub type TimeoutErrorR = crate::BitReader;
+        impl R {
+            #[doc = "Bit 0 - Keyslot flush is in progress"]
+            #[inline(always)]
+            pub fn flush_busy(&self) -> FlushBusyR {
+                FlushBusyR::new((self.bits & 1) != 0)
+            }
+            #[doc = "Bit 1 - Last keyslot unlock failed"]
+            #[inline(always)]
+            pub fn unlock_fail(&self) -> UnlockFailR {
+                UnlockFailR::new(((self.bits >> 1) & 1) != 0)
+            }
+            #[doc = "Bit 2 - Last keyslot flush timed out"]
+            #[inline(always)]
+            pub fn timeout_error(&self) -> TimeoutErrorR {
+                TimeoutErrorR::new(((self.bits >> 2) & 1) != 0)
+            }
+        }
+        #[doc = "PCPU keyslot flush status\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_pcpu_flush_busy::R`](R). See [API](https://docs.rs/svd2rust/#read--modify--write-api)."]
+        pub struct KcPcpuFlushBusySpec;
+        impl crate::RegisterSpec for KcPcpuFlushBusySpec {
+            type Ux = u32;
+        }
+        #[doc = "`read()` method returns [`kc_pcpu_flush_busy::R`](R) reader structure"]
+        impl crate::Readable for KcPcpuFlushBusySpec {}
+        #[doc = "`reset()` method sets KC_PCPU_FLUSH_BUSY to value 0"]
+        impl crate::Resettable for KcPcpuFlushBusySpec {}
+    }
+    #[doc = "KC_AIDSP_FLUSH_BUSY (r) register accessor: AIDSP keyslot flush status\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_aidsp_flush_busy::R`]. See [API](https://docs.rs/svd2rust/#read--modify--write-api).\n\nFor information about available fields see [`mod@kc_aidsp_flush_busy`] module"]
+    #[doc(alias = "KC_AIDSP_FLUSH_BUSY")]
+    pub type KcAidspFlushBusy = crate::Reg<kc_aidsp_flush_busy::KcAidspFlushBusySpec>;
+    #[doc = "AIDSP keyslot flush status"]
+    pub mod kc_aidsp_flush_busy {
+        #[doc = "Register `KC_AIDSP_FLUSH_BUSY` reader"]
+        pub type R = crate::R<KcAidspFlushBusySpec>;
+        #[doc = "Field `flush_busy` reader - Keyslot flush is in progress"]
+        pub type FlushBusyR = crate::BitReader;
+        #[doc = "Field `unlock_fail` reader - Last keyslot unlock failed"]
+        pub type UnlockFailR = crate::BitReader;
+        #[doc = "Field `timeout_error` reader - Last keyslot flush timed out"]
+        pub type TimeoutErrorR = crate::BitReader;
+        impl R {
+            #[doc = "Bit 0 - Keyslot flush is in progress"]
+            #[inline(always)]
+            pub fn flush_busy(&self) -> FlushBusyR {
+                FlushBusyR::new((self.bits & 1) != 0)
+            }
+            #[doc = "Bit 1 - Last keyslot unlock failed"]
+            #[inline(always)]
+            pub fn unlock_fail(&self) -> UnlockFailR {
+                UnlockFailR::new(((self.bits >> 1) & 1) != 0)
+            }
+            #[doc = "Bit 2 - Last keyslot flush timed out"]
+            #[inline(always)]
+            pub fn timeout_error(&self) -> TimeoutErrorR {
+                TimeoutErrorR::new(((self.bits >> 2) & 1) != 0)
+            }
+        }
+        #[doc = "AIDSP keyslot flush status\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_aidsp_flush_busy::R`](R). See [API](https://docs.rs/svd2rust/#read--modify--write-api)."]
+        pub struct KcAidspFlushBusySpec;
+        impl crate::RegisterSpec for KcAidspFlushBusySpec {
+            type Ux = u32;
+        }
+        #[doc = "`read()` method returns [`kc_aidsp_flush_busy::R`](R) reader structure"]
+        impl crate::Readable for KcAidspFlushBusySpec {}
+        #[doc = "`reset()` method sets KC_AIDSP_FLUSH_BUSY to value 0"]
+        impl crate::Resettable for KcAidspFlushBusySpec {}
     }
     #[doc = "KC_RD_SLOT_NUM (rw) register accessor: Keyslot query slot number selection\n\nYou can [`read`](crate::Reg::read) this register and get [`kc_rd_slot_num::R`]. You can [`reset`](crate::Reg::reset), [`write`](crate::Reg::write), [`write_with_zero`](crate::Reg::write_with_zero) this register using [`kc_rd_slot_num::W`]. You can also [`modify`](crate::Reg::modify) this register. See [API](https://docs.rs/svd2rust/#read--modify--write-api).\n\nFor information about available fields see [`mod@kc_rd_slot_num`] module"]
     #[doc(alias = "KC_RD_SLOT_NUM")]

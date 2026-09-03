@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.4.6] - 2026-09-03
+
+### Added
+
+- Generate the complete TEE, REE, PCPU, and AIDSP keyslot flush-status
+  register family, including read-only busy, unlock-failure, and timeout-error
+  fields.
+
 ## [0.4.5] - 2026-08-07
 
 ### Fixed
