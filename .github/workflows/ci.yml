@@ -15,6 +15,29 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
 
 jobs:
+  regenerate:
+    name: SVD to PAC reproducibility
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: astral-sh/setup-uv@v7
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-07-09
+          components: rust-src,clippy,rustfmt
+      - name: Install the pinned PAC generator
+        run: cargo install svd2rust --version 0.37.1 --locked
+      - name: Regenerate without modifying the tracked PAC
+        env:
+          PAC_LIB: ${{ runner.temp }}/ws63-pac-lib.rs
+        run: bash ws63-svd/regen.sh
+      - name: Compare generated and committed PAC
+        run: cmp "${{ runner.temp }}/ws63-pac-lib.rs" src/lib.rs
+      - name: Reject generation side effects
+        run: git diff --exit-code
+
   build:
     name: Build
     runs-on: ubuntu-latest
